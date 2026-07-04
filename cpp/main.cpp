@@ -1,3 +1,19 @@
+/* ============================================================================
+ * PROJECT: Minefield Game (C++ Edition)
+ * DESCRIPTON: Uses modern object-oriented C++ with native `<chrono>` streams
+ * for nanosecond seeding and dynamic `std::vector` multi-dimensional
+ * arrays. Zero external package requirements.
+ * ============================================================================
+ * HOW TO RUN:
+ * * [ Linux & macOS ]
+ * 1. Compile:               `g++ -O2 main.cpp -o minefield`
+ * 2. Execute:               `./minefield`
+ * * [ Windows ]
+ * 1. Compile:               `g++ -O2 main.cpp -o minefield.exe`
+ * 2. Execute:               `.\minefield.exe`
+ * ============================================================================
+ */
+
 #include <iostream>
 #include <vector>
 #include <chrono>

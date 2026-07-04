@@ -1,3 +1,19 @@
+/* ============================================================================
+ * PROJECT: Minefield Game (C Edition)
+ * DESCRIPTON: Dependency-free terminal game leveraging the ISO C standard
+ * library. Uses Knuth's MMIX LCG parameters. Standard unsigned 64-bit
+ * integers automatically handle modulo wrapping on overflow.
+ * ============================================================================
+ * HOW TO RUN:
+ * * [ Linux & macOS ]
+ * 1. Compile:               `gcc -O2 main.c -o minefield`
+ * 2. Execute:               `./minefield`
+ * * [ Windows ]
+ * 1. Compile:               `gcc -O2 main.c -o minefield.exe`
+ * 2. Execute:               `.\minefield.exe`
+ * ============================================================================
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

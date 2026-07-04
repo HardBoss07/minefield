@@ -1,3 +1,19 @@
+/* ============================================================================
+ * PROJECT: Minefield Game (Rust Edition)
+ * DESCRIPTON: A dependency-free terminal minefield game using a custom
+ * 64-bit Linear Congruential Generator (LCG) seeded via system time.
+ * ============================================================================
+ * HOW TO RUN:
+ * * [ Linux & macOS ]
+ * 1. Run via Cargo:         `cargo run`
+ * 2. Or compile manually:   `rustc main.rs -o minefield && ./minefield`
+ * * [ Windows ]
+ * 1. Run via Cargo:         `cargo run`
+ * 2. Or compile manually:   `rustc main.rs -o minefield.exe`
+ * `.\minefield.exe`
+ * ============================================================================
+ */
+
 use std::io::{self, Write};
 use std::time::{SystemTime, UNIX_EPOCH};
 

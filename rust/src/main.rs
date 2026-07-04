@@ -1,5 +1,36 @@
-use rand::{Rng, RngExt};
 use std::io::{self, Write};
+use std::time::{SystemTime, UNIX_EPOCH};
+
+struct Lcg {
+    state: u64,
+}
+
+impl Lcg {
+    fn new() -> Self {
+        let seed = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map(|d| d.as_nanos() as u64)
+            .unwrap_or(1337);
+
+        Lcg { state: seed }
+    }
+
+    fn next_u64(&mut self) -> u64 {
+        self.state = self
+            .state
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
+        self.state
+    }
+
+    fn random_range(&mut self, min: usize, max: usize) -> usize {
+        let range = max - min;
+        if range == 0 {
+            return min;
+        }
+        min + (self.next_u64() as usize % range)
+    }
+}
 
 #[derive(Debug, Clone, Copy)]
 struct Point {
@@ -12,7 +43,7 @@ const ROWS: usize = 8;
 const COLS: usize = 12;
 
 fn main() {
-    let _mine_count: usize = 0;
+    let _mine_count: usize = 10;
 
     let default_point = Point {
         x: 0,
@@ -124,12 +155,12 @@ fn print_game(phase: &char, player_pos: &(usize, usize)) {
 }
 
 fn mine_positions(mine_count: usize) -> Vec<[usize; 2]> {
-    let mut rng = rand::rng();
+    let mut rng = Lcg::new();
     let mut positions: Vec<[usize; 2]> = Vec::with_capacity(mine_count);
 
     while positions.len() < mine_count {
-        let x: usize = rng.random_range(0..ROWS);
-        let y: usize = rng.random_range(0..COLS);
+        let x: usize = rng.random_range(0, ROWS);
+        let y: usize = rng.random_range(0, COLS);
         let coord = [x, y];
 
         if !positions.contains(&coord) {

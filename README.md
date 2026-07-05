@@ -14,6 +14,12 @@ This repository isolates each language into its own directory. Where compilation
   - Source: [`c/main.c`](./c/main.c)
 - **[C++](./cpp/)**
   - Source: [`cpp/main.cpp`](./cpp/main.cpp)
+- **[Java](./java/)**
+  - Source: [`java/src/main/java/dev/m4tt3o/minefield/Main.java`](./java/src/main/java/dev/m4tt3o/minefield/Main.java)
+  - Manifest: [`java/pom.xml`](./java/pom.xml) (Standard Maven configuration)
+- **[Kotlin](./kotlin/)**
+  - Source: [`kotlin/src/main/kotlin/Main.kt`](./kotlin/src/main/kotlin/Main.kt)
+  - Manifest: [`kotlin/pom.xml`](./kotlin/pom.xml) (Standard Maven configuration)
 - **[Python](./python/)**
   - Source: [`python/main.py`](./python/main.py)
 - **[JavaScript](./javascript/)**
@@ -42,7 +48,7 @@ Ensure your standard compiler or interpreter toolchains are available in your en
 cd rust
 cargo run
 # Or compile manually out-of-source:
-# rustc src/main.rs -o minefield && ./minefield```
+# rustc src/main.rs -o minefield && ./minefield
 ```
 
 ### C
@@ -57,6 +63,30 @@ gcc -O2 main.c -o minefield && ./minefield
 ```bash
 cd cpp
 g++ -O2 main.cpp -o minefield && ./minefield
+```
+
+### Java
+
+```bash
+cd java
+# Compile manually out-of-source:
+javac src/main/java/dev/m4tt3o/minefield/Main.java -d target/classes
+java -cp target/classes dev.m4tt3o.minefield.Main
+
+# Or run via Maven:
+# mvn clean compile exec:java -Dexec.mainClass="dev.m4tt3o.minefield.Main"
+```
+
+### Kotlin
+
+```bash
+cd kotlin
+# Compile manually out-of-source:
+kotlinc src/main/kotlin/Main.kt -include-runtime -d target/minefield.jar
+java -jar target/minefield.jar
+
+# Or run via Maven:
+# mvn clean compile exec:java -Dexec.mainClass="MainKt"
 ```
 
 ### Python

@@ -32,9 +32,9 @@ section .text
 _start:
     ; 1. Initialize player state in global registers
     ; I keep these in registers so I don't have to deal with the stack
-    mov r15, 0              ; Player Row (starts at top: 0)
-    mov r14, COLS / 2       ; Player Col (starts in middle: 6)
-    mov r13, 'v'            ; Player Phase (looking down)
+    mov r15, 0                  ; Player Row (starts at top: 0)
+    mov r14, COLS / 2           ; Player Col (starts in middle: 6)
+    mov r13, 'v'                ; Player Phase (looking down)
 
     ; 2. Print the inital game board
     call print_game
@@ -48,7 +48,7 @@ _start:
 
     ; 4. Exit cleanly
     mov rax, SYS_EXIT
-    xor rdi, rdi            ; return code 0
+    xor rdi, rdi                ; return code 0
     syscall
 
 
@@ -62,14 +62,14 @@ _start:
 ; (r15, r14), it prints the player character (r13). Otherwise it prints '.'
 ; -------------------------------------------------------------------------
 print_game:
-    xor r8, r8              ; r8 = row iterator (0)
+    xor r8, r8                  ; r8 = row iterator (0)
 .row_loop:
     cmp r8, ROWS
-    jge .row_done           ; FIXED: jge instead of jpe
-    xor r9, r9              ; r9 = col iterator (0)
+    jge .row_done               ; FIXED: jge instead of jpe
+    xor r9, r9                  ; r9 = col iterator (0)
 .col_loop:
     cmp r9, COLS
-    jge .col_done           ; FIXED: jge instead of jpe
+    jge .col_done               ; FIXED: jge instead of jpe
 
     ; Check if current coordinate is the player
     cmp r8, r15
@@ -81,7 +81,7 @@ print_game:
     mov rdi, r13
     call print_char
     mov rdi, ' '            
-    call print_char         ; FIXED: Added missing call to print the space
+    call print_char
     jmp .next_col
 
 .print_dot:
@@ -96,7 +96,7 @@ print_game:
     jmp .col_loop
 
 .col_done:
-    mov rdi, 10             ; Print newline at end of row
+    mov rdi, 10                 ; Print newline at end of row
     call print_char
     inc r8
     jmp .row_loop
@@ -130,11 +130,11 @@ print_string:
 ; Input: rdi character value (e.g. '.')
 ; -------------------------------------------------------------------------
 print_char:
-    push rdi                ; Push char onto stack to get memory address
+    push rdi                    ; Push char onto stack to get memory address
     mov rax, SYS_WRITE
-    mov rsi, rsp            ; Point rsi to the top of stack
+    mov rsi, rsp                ; Point rsi to the top of stack
     mov rdi, STDOUT
-    mov rdx, 1              ; Write exactly 1 byte
+    mov rdx, 1                  ; Write exactly 1 byte
     syscall
-    pop rdi                 ; Restore stack to avoid memory corruption
+    pop rdi                     ; Restore stack to avoid memory corruption
     ret

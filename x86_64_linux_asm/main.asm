@@ -7,6 +7,7 @@
 %define SYS_READ    0
 %define SYS_WRITE   1
 %define SYS_EXIT    60
+%define SYS_TIME    201
 %define STDIN       0
 %define STDOUT      1
 
@@ -26,27 +27,70 @@ section .rodata
                 db "    Congratulations, you won!", 10
                 db "===================================", 10, 0
 
+section .bss
+    game_field resb ROWS * COLS
+    lcg_state  resb 1
+
 section .text
     global _start
 
 _start:
-    ; 1. Initialize player state in global registers
+    ; 1. Seed the RNG with current system time
+    mov rax, SYS_TIME
+    xor rdi, rdi
+    syscall
+    mov [lcg_state], rax
+
+    ; 2. Place mines randomly
+    mov r12, MINES
+.place_mines:
+    test r12, r12
+    jz .mines_done:             ; If MINES = 0, we are done
+
+    ; Get random row (0 to ROWS-1)
+    mov rdi, ROWS
+    call lcg_range
+    mov r10, rax                ; r10 = random row
+
+    ; Get random col (0 to COLS-1)
+    mov rdi, COLS
+    call lcg_range
+    mov r11, rax                ; r11 = random col
+
+    ; Calculate 1D array offset: (row * COLS) + col
+    mov rax, r10
+    mov rcx, COLS
+    mul rcx
+    add rax, r11
+
+    ; Check if mine is already placed here
+    cmp byte [game_field + rax], 1
+    je .place_mines             ; If mine is already there just loop through it again
+
+    ; Place mine and decrement counter
+    mov byte [game_field + rax], 1
+    dec r12
+    jmp .place_mines
+
+.mines_done:
+
+    ; 3. Initialize player state in global registers
     ; I keep these in registers so I don't have to deal with the stack
     mov r15, 0                  ; Player Row (starts at top: 0)
     mov r14, COLS / 2           ; Player Col (starts in middle: 6)
     mov r13, 'v'                ; Player Phase (looking down)
 
-    ; 2. Print the inital game board
+    ; 4. Print the inital game board
     call print_game
 
-    ; 3. Print an extra newline for clean formatting, then the prompt
+    ; 5. Print an extra newline for clean formatting, then the prompt
     mov rdi, 10
     call print_char
 
     mov rdi, msg_prompt
     call print_string
 
-    ; 4. Exit cleanly
+    ; 6. Exit cleanly
     mov rax, SYS_EXIT
     xor rdi, rdi                ; return code 0
     syscall
@@ -56,7 +100,7 @@ _start:
 ;; SUBROUTINES
 ;; ========================================================================
 
-;-------------------------------------------------------------------------
+; -------------------------------------------------------------------------
 ; print_game
 ; Iterates trhough ROWS and COLS. If the current cooridate matches
 ; (r15, r14), it prints the player character (r13). Otherwise it prints '.'
@@ -123,7 +167,6 @@ print_string:
     syscall
     ret
 
-
 ; -------------------------------------------------------------------------
 ; print_char(char c)
 ; Writes a single charater to STDOUT
@@ -137,4 +180,22 @@ print_char:
     mov rdx, 1                  ; Write exactly 1 byte
     syscall
     pop rdi                     ; Restore stack to avoid memory corruption
+    ret
+
+; -------------------------------------------------------------------------
+; lcg_range(max) -> random [0, max-1]
+; Uses standard 64-bit LCG math: state = (state * a + c) % max
+; Input: rdi = max range
+; Output: rax = random number
+; -------------------------------------------------------------------------
+lcg_range:
+    mov rax, [lcg_state]
+    mov rcx, 6364136223846793005    ; LCG Multiplier
+    mul rcx                         ; RDX:RAX = RAX * RCX
+    add rax, 1442695040888963407    ; LCG Increment
+    mov [lcg_state], rax
+    
+    xor rdx, rdx                    ; Clear RDX before division
+    div rdi                         ; Divide RDX:RAX by RDI. Remainder goes to RDX
+    mov rax, rdx                    ; Return the remainder (modulo)
     ret

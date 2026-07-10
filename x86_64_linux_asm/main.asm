@@ -29,7 +29,7 @@ section .rodata
 
 section .bss
     game_field resb ROWS * COLS
-    lcg_state  resb 1
+    lcg_state  resq 1
 
 section .text
     global _start
@@ -192,10 +192,13 @@ lcg_range:
     mov rax, [lcg_state]
     mov rcx, 6364136223846793005    ; LCG Multiplier
     mul rcx                         ; RDX:RAX = RAX * RCX
-    add rax, 1442695040888963407    ; LCG Increment
+    
+    mov rcx, 1442695040888963407    ; LCG Increment
+    add rax, rcx                    ; RAX = RAX + RCX
+    
     mov [lcg_state], rax
     
     xor rdx, rdx                    ; Clear RDX before division
-    div rdi                         ; Divide RDX:RAX by RDI. Remainder goes to RDX
+    div rdi                         ; Divide RDX:RAX by RDI
     mov rax, rdx                    ; Return the remainder (modulo)
     ret

@@ -45,7 +45,7 @@ _start:
     mov r12, MINES
 .place_mines:
     test r12, r12
-    jz .mines_done:             ; If MINES = 0, we are done
+    jz .mines_done              ; If MINES = 0, we are done
 
     ; Get random row (0 to ROWS-1)
     mov rdi, ROWS

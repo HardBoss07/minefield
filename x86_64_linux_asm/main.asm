@@ -1,6 +1,12 @@
 ;; ========================================================================
 ;; PROJECT: Minefield Game
 ;; ARCH: Linux x86-64 (NASM)
+;; HOW TO RUN:
+;; [ Linux & macOS ]
+;; 1. With make: `make`
+;; 2. Without make: `nasm -f elf64 main.asm && ld main.o -o main && ./main`
+;; [ Windows ]
+;; Not possible to run this assembly code on Windows without a Linux subsystem or emulator.
 ;; ========================================================================
 
 ;; Syscall & Constant Definitions
